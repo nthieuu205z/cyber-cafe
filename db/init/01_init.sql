@@ -81,14 +81,14 @@ insert into users (username, password_hash, role, balance) values
 on conflict (username) do nothing;
 
 insert into machines (name, status, price_per_hour, specs) values
-  ('PC-01', 'available',   12000, 'i5 / 16GB / GTX 1660'),
-  ('PC-02', 'available',   12000, 'i5 / 16GB / GTX 1660'),
-  ('PC-03', 'available',   12000, 'i5 / 16GB / GTX 1660'),
-  ('PC-04', 'maintenance', 12000, 'i5 / 16GB / GTX 1660'),
-  ('PC-05', 'available',   20000, 'i7 / 32GB / RTX 3070'),
-  ('PC-06', 'available',   20000, 'i7 / 32GB / RTX 3070'),
-  ('PC-07', 'error',       20000, 'i7 / 32GB / RTX 3070'),
-  ('PC-08', 'available',   20000, 'i7 / 32GB / RTX 3070');
+  ('PC-01', 'available',   12000, 'i5 / 16GB / GTX 3060'),
+  ('PC-02', 'available',   12000, 'i5 / 16GB / GTX 3060'),
+  ('PC-03', 'available',   12000, 'i5 / 16GB / GTX 4070'),
+  ('PC-04', 'maintenance', 12000, 'i5 / 16GB / GTX 4070'),
+  ('PC-05', 'available',   20000, 'i9 / 32GB / RTX 5070'),
+  ('PC-06', 'available',   20000, 'i9 / 32GB / RTX 5070'),
+  ('PC-07', 'error',       20000, 'U9 / 128GB / RTX 6090'),
+  ('PC-08', 'available',   20000, 'U9 / 128GB / RTX 6090');
 
 insert into services (name, price, category) values
   ('Mì tôm trứng',    20000, 'food'),
