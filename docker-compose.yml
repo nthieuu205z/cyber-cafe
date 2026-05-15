@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: cybercafe-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: cybercafe
+      POSTGRES_PASSWORD: cybercafe123
+      POSTGRES_DB: cybercafe
+    ports:
+      # Mở cổng 5432 ra ngoài để Azure Data Studio kết nối được
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      # File SQL trong db/init chay tu dong lan dau khi DB trong
+      - ./db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cybercafe -d cybercafe"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: cybercafe-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://cybercafe:cybercafe123@db:5432/cybercafe
+    ports:
+      - "3000:3000"
+
+volumes:
+  dbdata:

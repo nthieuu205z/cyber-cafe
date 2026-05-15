@@ -1,36 +1,92 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🖥️ Cyber Cafe Manager
 
-## Getting Started
+Phần mềm quản lý quán net / cyber cafe.
+**Stack:** Next.js 16 + React 19 + Tailwind v4 + PostgreSQL — chạy hoàn toàn bằng **Docker** (miễn phí, không cần Azure cloud).
 
-First, run the development server:
+---
+
+## 🚀 Chạy ứng dụng (1 lệnh)
+
+Yêu cầu: đã cài **Docker Desktop**.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd cyber-cafe
+docker compose up -d --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở trình duyệt: **http://localhost:3000**
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Dừng: `docker compose down`
+Dừng và xóa luôn dữ liệu DB: `docker compose down -v`
+Xem log: `docker compose logs -f app`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔑 Tài khoản demo
 
-To learn more about Next.js, take a look at the following resources:
+| Tài khoản | Mật khẩu  | Vai trò             |
+| --------- | --------- | ------------------- |
+| `admin`   | `admin123`| Quản trị (toàn quyền) |
+| `operator`| `oper123` | Nhân viên           |
+| `khach01` | `khach123`| Khách (số dư 50.000) |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🗄️ Xem database bằng Azure Data Studio
 
-## Deploy on Vercel
+PostgreSQL chạy trong Docker và **mở cổng 5432** ra ngoài. Trong Azure Data Studio:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Cài extension **PostgreSQL** (nếu chưa có).
+2. New Connection với thông tin:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Trường        | Giá trị        |
+| ------------- | -------------- |
+| Server / Host | `localhost`    |
+| Port          | `5432`         |
+| User          | `cybercafe`    |
+| Password      | `cybercafe123` |
+| Database      | `cybercafe`    |
+
+→ Kết nối là thấy toàn bộ bảng và dữ liệu.
+
+---
+
+## 📦 Cấu trúc
+
+```
+cyber-cafe/
+├── app/
+│   ├── login/                 # Đăng nhập
+│   └── (app)/                 # Khu vực sau đăng nhập (có sidebar)
+│       ├── dashboard/         # Tổng quan + biểu đồ
+│       ├── machines/          # Quản lý máy, mở/đóng phiên
+│       ├── sessions/          # Phiên + đếm giờ realtime
+│       ├── services/          # Dịch vụ (đồ ăn/uống)
+│       ├── invoices/          # Hóa đơn + in
+│       ├── users/             # Người dùng + nạp tiền (admin)
+│       └── reports/           # Báo cáo doanh thu (admin)
+├── components/                # Sidebar, Timer, Chart, ...
+├── lib/                       # db, auth, actions, types, format
+├── db/init/01_init.sql        # Tự tạo bảng + dữ liệu mẫu lần đầu
+├── Dockerfile
+└── docker-compose.yml
+```
+
+## 💻 Chạy chế độ dev (không bắt buộc)
+
+```bash
+docker compose up -d db          # chỉ chạy database
+npm install
+npm run dev                      # app tại http://localhost:3000
+```
+
+---
+
+## ☁️ Đưa lên Azure cloud sau này
+
+Code đã sẵn Docker nên deploy dễ. Cách phổ biến nhất:
+**Azure App Service (Web App for Containers)** + **Azure Database for PostgreSQL**.
+Chỉ cần đổi biến môi trường `DATABASE_URL` trỏ tới DB trên Azure.
+
+> ⚠️ Demo dùng mật khẩu dạng plain text và không bật RLS — chạy thật cần băm
+> mật khẩu (bcrypt) và thêm phân quyền ở tầng DB.
