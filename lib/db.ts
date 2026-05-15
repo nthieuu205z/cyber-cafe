@@ -5,12 +5,17 @@ import { Pool } from "pg";
 // - Chạy local (next dev): postgres://cybercafe:cybercafe123@localhost:5432/cybercafe
 const globalForDb = globalThis as unknown as { _pool?: Pool };
 
+const connectionString =
+  process.env.DATABASE_URL ??
+  "postgres://cybercafe:cybercafe123@localhost:5432/cybercafe";
+
 export const pool =
   globalForDb._pool ??
   new Pool({
-    connectionString:
-      process.env.DATABASE_URL ??
-      "postgres://cybercafe:cybercafe123@localhost:5432/cybercafe",
+    connectionString,
+    ssl: connectionString.includes("railway.app")
+      ? { rejectUnauthorized: false }
+      : false,
   });
 
 if (process.env.NODE_ENV !== "production") globalForDb._pool = pool;
